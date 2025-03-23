@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 
 const user = new mongoose.Schema({
-    userName: String,
-    password: String,
+    userName: { type: String },
+    password: { type: String },
 });
 
 export default user;

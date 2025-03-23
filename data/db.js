@@ -1,7 +1,11 @@
-import mongoose from "mongoose";
+import mongoose, { mongo } from "mongoose";
 import dotenv from "dotenv";
-import user from "./entities/User.js";
-import project from "./entities/Project.js";
+import contactSchema from './entities/Contact.js';
+import educationSchema from './entities/Education.js';
+import experienceSchema from "./entities/Experience.js";
+import projectSchema from "./entities/Project.js";
+import skillSchema from './entities/Skill.js';
+import userSchema from "./entities/User.js";
 
 dotenv.config();
 
@@ -11,13 +15,17 @@ const connectDb = async () => {
         console.log('MongoDB connected successfully');
     } catch (error) {
         console.error('MongoDB connection failed:', error.message);
-        process.exit(1); // Exit process with failure
+        process.exit(1);
     }
 };
 
 const models = {
-    User: mongoose.model('User', user),
-    Project: mongoose.model('Project', project),
+    Contact: mongoose.model('Contact', contactSchema),
+    Education: mongoose.model('Education', educationSchema),
+    Experience: mongoose.model('Experience', experienceSchema),
+    Project: mongoose.model('Project', projectSchema),
+    Skill: mongoose.model('Skill', skillSchema),
+    User: mongoose.model('User', userSchema),
 }
 
 export { connectDb, models };
