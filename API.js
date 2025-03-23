@@ -10,9 +10,9 @@ import cookieParser from "cookie-parser";
 dotenv.config();
 const app = express();
 const port = process.env.PORT;
-console.log(`\n.env variables:\n
-    ${process.env.PORT}\n
-    ${process.env.DB_CONNECTION}
+console.log(`\n.env variables:
+    PORT --> ${process.env.PORT}
+    DB_CONNECTION --> ${process.env.DB_CONNECTION}
 `);
 
 app.use(cors({
