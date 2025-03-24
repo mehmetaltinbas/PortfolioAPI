@@ -2,6 +2,7 @@ import { models } from '../data/db.js';
 import { errorHandler } from '../utilities/ErrorHandler.js';
 
 const CreateAsync = errorHandler(async function ExperienceService_CreateAsync(data) {
+    if (data.isCurrent) data.endDate = null;
     const experience = new models.Experience(data);
     await experience.save();
     return { isSuccess: true, message: "Experience created successfully" };
@@ -14,6 +15,7 @@ const GetAllByUserIdAsync = errorHandler(async function ExperienceService_GetAll
 
 const UpdateAsync = errorHandler(async function ExperienceService_UpdateAsync(data) {
     const { userId, experienceId, ...updateFields } = data;
+    if (updateFields.isCurrent) updateFields.endDate = null;
     const updatedExperience = await models.Experience.findOneAndUpdate(
         { _id: experienceId, userId },
         { $set: updateFields },

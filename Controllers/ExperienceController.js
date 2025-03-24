@@ -21,6 +21,7 @@ router.patch('/update/:experienceId', authMiddleware, async function UpdateExper
         experienceId: req.params.experienceId, 
         company: req.body.company, 
         position: req.body.position, 
+        isCurrent: req.body.isCurrent,
         startDate: req.body.startDate, 
         endDate: req.body.endDate 
     };

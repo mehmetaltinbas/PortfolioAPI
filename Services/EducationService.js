@@ -3,6 +3,7 @@ import { errorHandler } from '../utilities/ErrorHandler.js';
 
 
 const CreateAsync = errorHandler(async function EducationService_CreateAsync(data) {
+    if (data.isCurrent) data.endDate = null;
     const education = new models.Education(data);
     await education.save();
     return { isSuccess: true, message: "Education record created successfully" };
