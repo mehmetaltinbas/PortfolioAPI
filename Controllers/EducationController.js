@@ -25,6 +25,7 @@ router.patch('/update/:educationId', authMiddleware, async function UpdateEducat
         school: req.body.school, 
         degree: req.body.degree, 
         description: req.body.description, 
+        isCurrent: req.body.isCurrent,
         startDate: req.body.startDate, 
         endDate: req.body.endDate 
     };

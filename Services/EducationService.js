@@ -17,6 +17,7 @@ const GetAllByUserIdAsync = errorHandler(async function EducationService_GetAllB
 
 const UpdateAsync = errorHandler(async function EducationService_UpdateAsync(data) {
     const { userId, educationId, ...updateFields } = data;
+    if (updateFields.isCurrent) updateFields.endDate = null;
     const updatedEducation = await models.Education.findOneAndUpdate(
         { _id: educationId, userId },
         { $set: updateFields },
