@@ -29,8 +29,8 @@ router.get("/", async function GetAllUsers(req, res) {
 });
 
 
-router.get("/:id", async function GetByUserById(req, res) {
-    const userResponse = await userService.GetByIdAsync(req.params.id);
+router.get("/:userId", async function GetUserById(req, res) {
+    const userResponse = await userService.GetByIdAsync(req.params.userId);
     res.json(userResponse);
 });
 
