@@ -6,8 +6,18 @@ const router = express.Router();
 
 
 router.post('/create', authMiddleware, async function CreateEducation(req, res) {
-    req.body.userId = req.user.userId;
-    const response = await educationService.CreateAsync(req.body);
+    const data = { 
+        userId: req.user.userId
+    };
+
+    // Dynamically add all req.body properties except for userId
+    Object.keys(req.body).forEach(key => {
+        if (req.body[key] !== undefined) {
+            data[key] = req.body[key];
+        }
+    });
+
+    const response = await educationService.CreateAsync(data);
     res.json(response);
 });
 
@@ -20,17 +30,17 @@ router.get('/:userId', async function GetAllEducationByUserId(req, res) {
 
 router.patch('/update/:educationId', authMiddleware, async function UpdateEducation(req, res) {
     const data = { 
-        userId: req.user.userId, 
-        educationId: req.params.educationId, 
-        school: req.body.school, 
-        degree: req.body.degree,
-        fieldOfStudy: req.body.fieldOfStudy,
-        websiteLink: req.body.websiteLink,
-        description: req.body.description, 
-        isCurrent: req.body.isCurrent,
-        startDate: req.body.startDate, 
-        endDate: req.body.endDate 
+        userId: req.user.userId,
+        educationId: req.params.educationId
     };
+
+    // Dynamically add all req.body properties except for userId and educationId
+    Object.keys(req.body).forEach(key => {
+        if (req.body[key] !== undefined) {
+            data[key] = req.body[key];
+        }
+    });
+
     const response = await educationService.UpdateAsync(data);
     res.json(response);
 });

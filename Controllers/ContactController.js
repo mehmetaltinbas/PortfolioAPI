@@ -6,8 +6,18 @@ const router = express.Router();
 
 
 router.post('/create', authMiddleware, async function CreateContact(req, res) {
-    req.body.userId = req.user.userId;
-    const response = await contactService.CreateAsync(req.body);
+    const data = { 
+        userId: req.user.userId
+    };
+
+    // Dynamically add all req.body properties except for userId
+    Object.keys(req.body).forEach(key => {
+        if (req.body[key] !== undefined) {
+            data[key] = req.body[key];
+        }
+    });
+
+    const response = await contactService.CreateAsync(data);
     res.json(response);
 });
 
@@ -20,11 +30,17 @@ router.get('/:userId', async function GetAllContactsByUserId(req, res) {
 
 router.patch('/update/:contactId', authMiddleware, async function UpdateContact(req, res) {
     const data = { 
-        userId: req.user.userId, 
-        contactId: req.params.contactId, 
-        type: req.body.type, 
-        value: req.body.value 
+        userId: req.user.userId,
+        contactId: req.params.contactId
     };
+
+    // Dynamically add all req.body properties except for userId and contactId
+    Object.keys(req.body).forEach(key => {
+        if (req.body[key] !== undefined) {
+            data[key] = req.body[key];
+        }
+    });
+
     const response = await contactService.UpdateAsync(data);
     res.json(response);
 });

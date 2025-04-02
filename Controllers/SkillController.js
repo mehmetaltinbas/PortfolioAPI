@@ -6,8 +6,18 @@ const router = express.Router();
 
 
 router.post('/create', authMiddleware, async function CreateSkill(req, res) {
-    req.body.userId = req.user.userId;
-    const response = await skillService.CreateAsync(req.body);
+    const data = { 
+        userId: req.user.userId
+    };
+
+    // Dynamically add all req.body properties except for userId
+    Object.keys(req.body).forEach(key => {
+        if (req.body[key] !== undefined) {
+            data[key] = req.body[key];
+        }
+    });
+
+    const response = await skillService.CreateAsync(data);
     res.json(response);
 });
 
@@ -20,11 +30,17 @@ router.get('/:userId', async function GetAllSkillsByUserId(req, res) {
 
 router.patch('/update/:skillId', authMiddleware, async function UpdateSkill(req, res) {
     const data = { 
-        userId: req.user.userId, 
-        skillId: req.params.skillId, 
-        name: req.body.name, 
-        level: req.body.level 
+        userId: req.user.userId,
+        skillId: req.params.skillId
     };
+
+    // Dynamically add all req.body properties except for userId and skillId
+    Object.keys(req.body).forEach(key => {
+        if (req.body[key] !== undefined) {
+            data[key] = req.body[key];
+        }
+    });
+
     const response = await skillService.UpdateAsync(data);
     res.json(response);
 });

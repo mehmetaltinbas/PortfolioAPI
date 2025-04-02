@@ -6,7 +6,15 @@ const router = express.Router();
 
 
 router.post('/signup', async function SignUp(req, res) {
-    const response = await userService.SignUpAsync(req.body);
+    const data = { 
+        ...req.body
+    };
+
+    // If you need to add userId, you can do it here (assuming it's set in the user context)
+    // For example, if userId comes from req.user, you'd add it like this:
+    // data.userId = req.user.userId;
+
+    const response = await userService.SignUpAsync(data);
     res.json(response);
 });
 
@@ -44,8 +52,18 @@ router.get("/:userId", async function GetUserById(req, res) {
 
 
 router.patch('/update', authMiddleware, async function UpdateUser(req, res) {
-    req.body.id = req.user.userId;
-    const response = await userService.UpdateAsync(req.body);
+    const data = { 
+        userId: req.user.userId
+    };
+
+    // Dynamically add all req.body properties except for userId
+    Object.keys(req.body).forEach(key => {
+        if (req.body[key] !== undefined) {
+            data[key] = req.body[key];
+        }
+    });
+
+    const response = await userService.UpdateAsync(data);
     res.json(response);
 });
 

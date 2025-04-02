@@ -6,11 +6,17 @@ const router = express.Router();
 
 
 router.post('/create/:experienceId', authMiddleware, async function CreateActivity(req, res) {
-    const data = {
-        experienceId: req.params.experienceId,
-        activity: req.body.activity,
-        order: req.body.order
+    const data = { 
+        experienceId: req.params.experienceId
     };
+
+    // Dynamically add all req.body properties except for experienceId
+    Object.keys(req.body).forEach(key => {
+        if (req.body[key] !== undefined) {
+            data[key] = req.body[key];
+        }
+    });
+
     const response = await activityService.CreateAsync(data);
     res.json(response);
 });
@@ -23,12 +29,17 @@ router.get('/:experienceId', async function GetActivitiesByExperienceId(req, res
 
 
 router.patch('/update/:activityId', authMiddleware, async function UpdateActivity(req, res) {
-    const data = {
-        activityId: req.params.activityId,
-        experienceId: req.body.experienceId,
-        activity: req.body.activity,
-        order: req.body.order
+    const data = { 
+        activityId: req.params.activityId
     };
+
+    // Dynamically add all req.body properties except for activityId
+    Object.keys(req.body).forEach(key => {
+        if (req.body[key] !== undefined) {
+            data[key] = req.body[key];
+        }
+    });
+
     const response = await activityService.UpdateAsync(data);
     res.json(response);
 });
