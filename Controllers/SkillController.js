@@ -7,14 +7,14 @@ const router = express.Router();
 
 router.post('/create', authMiddleware, async function CreateSkill(req, res) {
     req.body.userId = req.user.userId;
-    const creationResponse = await skillService.CreateAsync(req.body);
-    res.json(creationResponse);
+    const response = await skillService.CreateAsync(req.body);
+    res.json(response);
 });
 
 
 router.get('/:userId', async function GetAllSkillsByUserId(req, res) {
-    const skills = await skillService.GetAllByUserIdAsync(req.params.userId);
-    res.json(skills);
+    const response = await skillService.GetAllByUserIdAsync(req.params.userId);
+    res.json(response);
 });
 
 
@@ -25,15 +25,15 @@ router.patch('/update/:skillId', authMiddleware, async function UpdateSkill(req,
         name: req.body.name, 
         level: req.body.level 
     };
-    const updateResponse = await skillService.UpdateAsync(data);
-    res.json(updateResponse);
+    const response = await skillService.UpdateAsync(data);
+    res.json(response);
 });
 
 
 router.delete('/delete/:skillId', authMiddleware, async function DeleteSkill(req, res) {
     const data = { userId: req.user.userId, skillId: req.params.skillId };
-    const deleteResponse = await skillService.DeleteAsync(data);
-    res.json(deleteResponse);
+    const response = await skillService.DeleteAsync(data);
+    res.json(response);
 });
 
 

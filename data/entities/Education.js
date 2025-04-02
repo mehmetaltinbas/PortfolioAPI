@@ -5,6 +5,7 @@ const educationSchema = new mongoose.Schema({
     school: { type: String, required: true },
     degree: { type: String },
     fieldOfStudy: { type: String },
+    websiteLink: { type: String },
     description: { type: String },
     isCurrent: { type: Boolean, default: false },
     startDate: { type: Date, required: true },

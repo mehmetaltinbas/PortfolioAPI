@@ -6,6 +6,7 @@ import experienceSchema from "./entities/Experience.js";
 import projectSchema from "./entities/Project.js";
 import skillSchema from './entities/Skill.js';
 import userSchema from "./entities/User.js";
+import activitySchema from './entities/Activity.js'
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ const models = {
     Project: mongoose.model('Project', projectSchema),
     Skill: mongoose.model('Skill', skillSchema),
     User: mongoose.model('User', userSchema),
+    Activity: mongoose.model('Activity', activitySchema)
 }
 
 export { connectDb, models };

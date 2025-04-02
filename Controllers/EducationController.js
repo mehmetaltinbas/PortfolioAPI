@@ -7,8 +7,8 @@ const router = express.Router();
 
 router.post('/create', authMiddleware, async function CreateEducation(req, res) {
     req.body.userId = req.user.userId;
-    const creationResponse = await educationService.CreateAsync(req.body);
-    res.json(creationResponse);
+    const response = await educationService.CreateAsync(req.body);
+    res.json(response);
 });
 
 
@@ -23,21 +23,23 @@ router.patch('/update/:educationId', authMiddleware, async function UpdateEducat
         userId: req.user.userId, 
         educationId: req.params.educationId, 
         school: req.body.school, 
-        degree: req.body.degree, 
+        degree: req.body.degree,
+        fieldOfStudy: req.body.fieldOfStudy,
+        websiteLink: req.body.websiteLink,
         description: req.body.description, 
         isCurrent: req.body.isCurrent,
         startDate: req.body.startDate, 
         endDate: req.body.endDate 
     };
-    const updateResponse = await educationService.UpdateAsync(data);
-    res.json(updateResponse);
+    const response = await educationService.UpdateAsync(data);
+    res.json(response);
 });
 
 
 router.delete('/delete/:educationId', authMiddleware, async function DeleteEducation(req, res) {
     const data = { userId: req.user.userId, educationId: req.params.educationId };
-    const deleteResponse = await educationService.DeleteAsync(data);
-    res.json(deleteResponse);
+    const response = await educationService.DeleteAsync(data);
+    res.json(response);
 });
 
 

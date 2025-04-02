@@ -1,5 +1,17 @@
 import { models } from '../data/db.js';
 import { errorHandler } from '../utilities/ErrorHandler.js';
+import nodemailer from 'nodemailer';
+import dotenv from "dotenv";
+
+dotenv.config();
+
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL,
+        pass: process.env.EMAIL_PASSWORD
+    }
+})
 
 
 const CreateAsync = errorHandler(async function ContactService_CreateAsync(data) {
@@ -37,10 +49,33 @@ const DeleteAsync = errorHandler(async function ContactService_DeleteAsync(data)
 });
 
 
+const SendMailAsync = errorHandler(async function ContactService_SendMailAsync(data) {
+    const mailOptions = {
+        from: data.email,
+        to: process.env.EMAIL,
+        subject: 'Portfolio Website Contact',
+        text: `
+            Name: ${data.name}
+            E-mail: ${data.email}
+            Message: ${data.message}
+        `,
+        };
+
+        try {
+            const info = await transporter.sendMail(mailOptions);
+            console.log('Email sent successfully --> ', info.response);
+            return { isSuccess: true, message: "Email sent successfully." };
+        } catch (error) {
+            console.error("Error --> ", error);
+            return { isSuccess: false, message: "Email couldn't send." };
+        }
+});
+
+
 export default {
     CreateAsync,
     GetAllByUserIdAsync,
     UpdateAsync,
     DeleteAsync,
-
+    SendMailAsync,
 }

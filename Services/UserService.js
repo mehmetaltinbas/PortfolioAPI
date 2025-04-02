@@ -2,13 +2,20 @@ import { models } from '../data/db.js';
 import { errorHandler } from '../utilities/ErrorHandler.js';
 import bcrypt from 'bcrypt';
 import jwt from "jsonwebtoken";
+import contactService from './ContactService.js';
+import educationService from './EducationService.js';
+import experienceService from './ExperienceService.js';
+import projectService from './ProjectService.js';
+import skillService from './SkillService.js';
 
 
 const SignUpAsync = errorHandler(async function UserService_SignUpAsync(data) {
-    const hashedPassword = await bcrypt.hash(data.password, 10);
+    const { password, ...creationFields } = data;
+    const hashedPassword = await bcrypt.hash(password, 10);
     const user = new models.User({
-        userName: data.userName,
-        passwordHash: hashedPassword
+        ...creationFields,
+        passwordHash: hashedPassword,
+        emailPasswordHash: hashedEmailPassword,
     });
     await user.save();
     return { isSuccess: true, message: "Signed up."};
@@ -46,23 +53,40 @@ const GetAllAsync = errorHandler(async function UserService_GetAllAsync() {
 const GetByIdAsync = errorHandler(async function UserService_GetByIdAsync(userId) {
     const user = await models.User.findById(userId);
     if (!user) return { isSuccess: false, message: "User not found." };
-    return { isSuccess: true, message: "User read for given userId.", user };
+    const contactsResponse = await contactService.GetAllByUserIdAsync(user._id);
+    const educationsResponse = await educationService.GetAllByUserIdAsync(user._id);
+    const experiencesResponse = await experienceService.GetAllByUserIdAsync(user._id);
+    const projectsResponse = await projectService.GetAllByUserIdAsync(user._id);
+    const skillsResponse = await skillService.GetAllByUserIdAsync(user._id);
+    const birthdate = new Date(user.dateOfBirth);
+    user.age = new Date().getFullYear() - birthdate.getFullYear();
+    return { 
+        isSuccess: true, 
+        message: "User read for given userId.", 
+        user: {
+            ...user.toObject(),
+            contacts: contactsResponse.contacts,
+            educations: educationsResponse.educations,
+            experiences: experiencesResponse.experiences,
+            projects: projectsResponse.projects,
+            skills: skillsResponse.skills
+        }
+    };
 });
 
 
 const UpdateAsync = errorHandler(async function UserService_UpdateAsync(data) {
-    const hashedPassword = await bcrypt.hash(data.password, 10);
+    const { id, password, ...updateFields } = data;
 
-    const updatedUser = await models.User.findByIdAndUpdate(
-        data.id,
-        {
-            userName: data.userName,
-            passwordHash: hashedPassword,
-        },
+    if (password) updateFields.passwordHash = await bcrypt.hash(password, 10);
+
+    const updatedUser = await models.User.findOneAndUpdate(
+        { _id: id },
+        { $set: updateFields },
         { new: true }
-    )
+    );
 
-    if (!updatedUser) return { isSuccess: false, message: "No user found." };
+    if (!updatedUser) return { isSuccess: false, message: "User not found." };
     return { isSuccess: true, message: "User updated." };
 });
 
@@ -74,5 +98,4 @@ export default {
     GetAllAsync,
     GetByIdAsync,
     UpdateAsync,
-
 }
