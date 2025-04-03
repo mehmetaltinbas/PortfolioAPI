@@ -46,7 +46,9 @@ router.patch('/update/:activityId', authMiddleware, async function UpdateActivit
 
 
 router.delete('/delete/:activityId', authMiddleware, async function DeleteActivity(req, res) {
-    const data = { activityId: req.params.activityId };
+    const data = { 
+        activityId: req.params.activityId 
+    };
     const response = await activityService.DeleteAsync(data);
     res.json(response);
 });

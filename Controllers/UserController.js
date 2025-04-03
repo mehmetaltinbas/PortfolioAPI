@@ -1,6 +1,7 @@
 import express from "express";
 import userService from '../Services/UserService.js';
 import authMiddleware from "../middlewares/AuthMiddleware.js";
+import multerMiddleware from "../middlewares/MulterMiddleware.js";
 
 const router = express.Router();
 
@@ -9,10 +10,6 @@ router.post('/signup', async function SignUp(req, res) {
     const data = { 
         ...req.body
     };
-
-    // If you need to add userId, you can do it here (assuming it's set in the user context)
-    // For example, if userId comes from req.user, you'd add it like this:
-    // data.userId = req.user.userId;
 
     const response = await userService.SignUpAsync(data);
     res.json(response);
@@ -56,7 +53,6 @@ router.patch('/update', authMiddleware, async function UpdateUser(req, res) {
         userId: req.user.userId
     };
 
-    // Dynamically add all req.body properties except for userId
     Object.keys(req.body).forEach(key => {
         if (req.body[key] !== undefined) {
             data[key] = req.body[key];
@@ -64,6 +60,38 @@ router.patch('/update', authMiddleware, async function UpdateUser(req, res) {
     });
 
     const response = await userService.UpdateAsync(data);
+    res.json(response);
+});
+
+
+router.patch('/update/profilephoto', authMiddleware, multerMiddleware.upload.single("file"), async function UpdatePhoto(req, res) {
+    const data = {
+        userId: req.user.userId,
+        file: req.file
+    };
+    const response = await userService.UpdateProfilePhotoAsync(data);
+    res.json(response);
+});
+
+
+router.delete('/delete/profilephoto', authMiddleware, async function UpdatePhoto(req, res) {
+    const response = await userService.DeleteProfilePhotoAsync(req.user.userId);
+    res.json(response);
+});
+
+
+router.patch('/update/aboutmephoto', authMiddleware, multerMiddleware.upload.single("file"), async function UpdatePhoto(req, res) {
+    const data = {
+        userId: req.user.userId,
+        file: req.file
+    };
+    const response = await userService.UpdateAboutMePhotoAsync(data);
+    res.json(response);
+});
+
+
+router.delete('/delete/aboutmephoto', authMiddleware, async function UpdatePhoto(req, res) {
+    const response = await userService.DeleteAboutMePhotoAsync(req.user.userId);
     res.json(response);
 });
 

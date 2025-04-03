@@ -7,6 +7,11 @@ import educationService from './EducationService.js';
 import experienceService from './ExperienceService.js';
 import projectService from './ProjectService.js';
 import skillService from './SkillService.js';
+import dotenv from "dotenv";
+import fs from 'fs';
+import path from 'path';
+
+dotenv.config();
 
 
 const SignUpAsync = errorHandler(async function UserService_SignUpAsync(data) {
@@ -60,6 +65,10 @@ const GetByIdAsync = errorHandler(async function UserService_GetByIdAsync(userId
     const skillsResponse = await skillService.GetAllByUserIdAsync(user._id);
     const birthdate = new Date(user.dateOfBirth);
     user.age = new Date().getFullYear() - birthdate.getFullYear();
+    const profilePhotoFilePath = user.profilePhotoPath;
+    user.profilePhotoPath = `${process.env.BASE_URL}${profilePhotoFilePath}`;
+    const aboutMePhotoFilePath = user.aboutMePhotoPath;
+    user.aboutMePhotoPath = `${process.env.BASE_URL}${aboutMePhotoFilePath}`;
     return { 
         isSuccess: true, 
         message: "User read for given userId.", 
@@ -76,18 +85,74 @@ const GetByIdAsync = errorHandler(async function UserService_GetByIdAsync(userId
 
 
 const UpdateAsync = errorHandler(async function UserService_UpdateAsync(data) {
-    const { id, password, ...updateFields } = data;
+    const { userId, password, ...updateFields } = data;
 
     if (password) updateFields.passwordHash = await bcrypt.hash(password, 10);
 
     const updatedUser = await models.User.findOneAndUpdate(
-        { _id: id },
+        { _id: userId },
         { $set: updateFields },
         { new: true }
     );
 
     if (!updatedUser) return { isSuccess: false, message: "User not found." };
     return { isSuccess: true, message: "User updated." };
+});
+
+
+const UpdateProfilePhotoAsync = errorHandler(async function UserService_UpdateProfilePhotoAsync(data) {
+    const filePath = `uploads/${data.file.filename}`;
+    const updatedUser = await models.User.findOneAndUpdate(
+        { _id: data.userId },
+        { $set: { profilePhotoPath: filePath } },
+        { new: true }
+    );
+    if (!updatedUser) return { isSuccess: false, message: "User not found." };
+    return { isSuccess: true, message: "Profile photo path updated." };
+});
+
+
+const DeleteProfilePhotoAsync = errorHandler(async function UserService_DeleteProfilePhotoAsync(userId) {
+    const user = await models.User.findById(userId);
+    if (!user || !user.profilePhotoPath) return { isSuccess: false, message: "User or profile photo not found." };
+
+    const filePath = path.join(process.cwd(), user.profilePhotoPath);
+    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+
+    await models.User.findByIdAndUpdate(
+        { _id: userId },
+        { $set: { profilePhotoPath: null } }
+    );
+
+    return { isSuccess: true, message: "Profile photo deleted." };
+});
+
+
+const UpdateAboutMePhotoAsync = errorHandler(async function UserService_UpdateAboutMePhotoAsync(data) {
+    const filePath = `uploads/${data.file.filename}`;
+    const updatedUser = await models.User.findOneAndUpdate(
+        { _id: data.userId },
+        { $set: { aboutMePhotoPath: filePath } },
+        { new: true }
+    );
+    if (!updatedUser) return { isSuccess: false, message: "User not found." };
+    return { isSuccess: true, message: "About me photo path updated." };
+});
+
+
+const DeleteAboutMePhotoAsync = errorHandler(async function UserService_DeleteAboutMePhotoAsync(userId) {
+    const user = await models.User.findById(userId);
+    if (!user || !user.aboutMePhotoPath) return { isSuccess: false, message: "User or aboutme photo not found." };
+
+    const filePath = path.join(process.cwd(), user.aboutMePhotoPath);
+    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+
+    await models.User.findByIdAndUpdate(
+        { _id: userId },
+        { $set: { aboutMePhotoPath: null } }
+    );
+
+    return { isSuccess: true, message: "About me photo deleted." };
 });
 
 
@@ -98,4 +163,8 @@ export default {
     GetAllAsync,
     GetByIdAsync,
     UpdateAsync,
+    UpdateProfilePhotoAsync,
+    DeleteProfilePhotoAsync,
+    UpdateAboutMePhotoAsync,
+    DeleteAboutMePhotoAsync
 }
