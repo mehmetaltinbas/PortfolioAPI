@@ -1,5 +1,7 @@
 import { models } from '../data/db.js';
 import { errorHandler } from '../utilities/ErrorHandler.js';
+import projectSkillService from './ProjectSkillService.js';
+import projectLinkService from './ProjectLinkService.js';
 
 
 const CreateAsync = errorHandler(async function ProjectService_CreateAsync(data) {
@@ -10,7 +12,13 @@ const CreateAsync = errorHandler(async function ProjectService_CreateAsync(data)
 
 
 const GetAllByUserIdAsync = errorHandler(async function ProjectService_GetAllByUserIdAsync(userId) {
-    const projects = await models.Project.find({ userId });
+    const projects = await models.Project.find({ userId }).lean();
+    await Promise.all(projects.map(async (project) => {
+        const projectLinksResponse = await projectLinkService.GetAllByProjectIdAsync(project._id);
+        project.projectLinks = projectLinksResponse.projectLinks;
+        const projectSkillsResponse = await projectSkillService.GetAllByProjectIdAsync(project._id);
+        project.projectSkills = projectSkillsResponse.projectSkills;
+    }));
     return { isSuccess: true, message: "Projects associated with given userId read.", projects };
 });
 
