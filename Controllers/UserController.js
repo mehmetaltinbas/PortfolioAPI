@@ -67,7 +67,7 @@ router.patch('/update', authMiddleware, async function UpdateUser(req, res) {
 router.patch('/update/profilephoto', authMiddleware, multerMiddleware.upload.single("file"), async function UpdatePhoto(req, res) {
     const data = {
         userId: req.user.userId,
-        file: req.file
+        file: req.file,
     };
     const response = await userService.UpdateProfilePhotoAsync(data);
     res.json(response);

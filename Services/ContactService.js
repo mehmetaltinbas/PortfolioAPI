@@ -2,6 +2,8 @@ import { models } from '../data/db.js';
 import { errorHandler } from '../utilities/ErrorHandler.js';
 import nodemailer from 'nodemailer';
 import dotenv from "dotenv";
+import fs from 'fs';
+import path from 'path';
 
 dotenv.config();
 
@@ -61,14 +63,35 @@ const SendMailAsync = errorHandler(async function ContactService_SendMailAsync(d
         `,
         };
 
-        try {
-            const info = await transporter.sendMail(mailOptions);
-            console.log('Email sent successfully --> ', info.response);
-            return { isSuccess: true, message: "Email sent successfully." };
-        } catch (error) {
-            console.error("Error --> ", error);
-            return { isSuccess: false, message: "Email couldn't send." };
-        }
+        const info = await transporter.sendMail(mailOptions);
+        console.log('Email sent successfully --> ', info.response);
+        return { isSuccess: true, message: "Email sent successfully." };
+});
+
+
+const GetCVPathByUserIdAsync = errorHandler(async function ContactService_GetCVPathByUserIdAsync(userId) {
+    const contacts = await models.Contact.find({ userId }).lean();
+    const cvContact =  contacts.find(contact => contact.type == 'cv');
+    return`uploads/${cvContact.value}`;
+});
+
+
+const UpdateCVAsync = errorHandler(async function ContactService_UpdateCVAsync(data) {
+    const contacts = await models.Contact.find({ userId: data.userId }).lean();
+    const cvContact =  contacts.find(contact => contact.type == 'cv');
+    if (cvContact == null) {
+        const contact = new models.Contact(data);
+        await contact.save();
+    }
+    const filePath = path.join(process.cwd(), `uploads/${cvContact.value}`);
+    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    const updatedCVContact = await models.Contact.findOneAndUpdate(
+        { _id: cvContact._id, userId: data.userId },
+        { $set: { value: data.value} },
+        { new: true }
+    );
+    if (!updatedCVContact) return { isSuccess: false, message: "Couldn't updated." };
+    return { isSuccess: true, message: "Contact updated successfully" };
 });
 
 
@@ -78,4 +101,6 @@ export default {
     UpdateAsync,
     DeleteAsync,
     SendMailAsync,
+    GetCVPathByUserIdAsync,
+    UpdateCVAsync
 }

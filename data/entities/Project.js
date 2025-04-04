@@ -6,7 +6,6 @@ const projectSchema = new mongoose.Schema({
     title: { type: String, required: true },
     shortDescription: { type: String },
     longDescription: { type: String },
-    liveDemoLink: { type: String },
 });
 
 export default projectSchema;

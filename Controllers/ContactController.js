@@ -1,6 +1,8 @@
 import express from "express";
 import contactService from '../Services/ContactService.js';
 import authMiddleware from "../middlewares/AuthMiddleware.js";
+import multerMiddleware from '../middlewares/MulterMiddleware.js';
+import fs from 'fs';
 
 const router = express.Router();
 
@@ -10,7 +12,6 @@ router.post('/create', authMiddleware, async function CreateContact(req, res) {
         userId: req.user.userId
     };
 
-    // Dynamically add all req.body properties except for userId
     Object.keys(req.body).forEach(key => {
         if (req.body[key] !== undefined) {
             data[key] = req.body[key];
@@ -29,12 +30,12 @@ router.get('/:userId', async function GetAllContactsByUserId(req, res) {
 
 
 router.patch('/update/:contactId', authMiddleware, async function UpdateContact(req, res) {
+    console.log("hit");
     const data = { 
         userId: req.user.userId,
         contactId: req.params.contactId
     };
 
-    // Dynamically add all req.body properties except for userId and contactId
     Object.keys(req.body).forEach(key => {
         if (req.body[key] !== undefined) {
             data[key] = req.body[key];
@@ -55,6 +56,33 @@ router.delete('/delete/:contactId', authMiddleware, async function DeleteContact
 
 router.post('/sendmail', async function SendMail(req, res) {
     const response = await contactService.SendMailAsync(req.body);
+    res.json(response);
+});
+
+
+router.get('/cv/download', authMiddleware, async function DownloadCV(req, res) {
+    const userId = req.user.userId;
+
+    const filePath = await contactService.GetCVPathByUserIdAsync(userId);
+    console.log(filePath);
+
+    if (!fs.existsSync(filePath)) {
+        return res.status(404).json({ message: 'CV not found' });
+    }
+
+    res.download(filePath, 'cv.pdf');
+});
+
+
+router.patch('/cv/update', authMiddleware, multerMiddleware.upload.single("file"), async function UpdateCV(req, res) {
+    const data = { 
+        userId: req.user.userId,
+        type: 'cv',
+        value: req.file.filename,
+    };
+    console.log(data);
+
+    const response = await contactService.UpdateCVAsync(data);
     res.json(response);
 });
 

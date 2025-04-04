@@ -10,7 +10,6 @@ router.post('/create', authMiddleware, async function CreateProject(req, res) {
         userId: req.user.userId
     };
 
-    // Dynamically add all req.body properties except for userId
     Object.keys(req.body).forEach(key => {
         if (req.body[key] !== undefined) {
             data[key] = req.body[key];
@@ -34,7 +33,6 @@ router.patch('/update/:projectId', authMiddleware, async function UpdateProject(
         projectId: req.params.projectId
     };
 
-    // Dynamically add all req.body properties except for userId and projectId
     Object.keys(req.body).forEach(key => {
         if (req.body[key] !== undefined) {
             data[key] = req.body[key];
