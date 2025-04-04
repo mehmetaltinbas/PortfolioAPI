@@ -9,6 +9,7 @@ import userSchema from "./entities/User.js";
 import activitySchema from './entities/Activity.js'
 import projectSkillSchema from "./entities/ProjectSkill.js";
 import projectLinkSchema from "./entities/ProjectLink.js";
+import projectPhotoSchema from './entities/ProjectPhoto.js';
 
 dotenv.config();
 
@@ -32,6 +33,7 @@ const models = {
     Activity: mongoose.model('Activity', activitySchema),
     ProjectSkill: mongoose.model('ProjectSkill', projectSkillSchema),
     ProjectLink: mongoose.model('ProjectLink', projectLinkSchema),
+    ProjectPhoto: mongoose.model('ProjectPhoto', projectPhotoSchema),
 }
 
 export { connectDb, models };

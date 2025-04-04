@@ -10,7 +10,6 @@ router.post('/create', authMiddleware, async function CreateSkill(req, res) {
         userId: req.user.userId
     };
 
-    // Dynamically add all req.body properties except for userId
     Object.keys(req.body).forEach(key => {
         if (req.body[key] !== undefined) {
             data[key] = req.body[key];
@@ -34,7 +33,6 @@ router.patch('/update/:skillId', authMiddleware, async function UpdateSkill(req,
         skillId: req.params.skillId
     };
 
-    // Dynamically add all req.body properties except for userId and skillId
     Object.keys(req.body).forEach(key => {
         if (req.body[key] !== undefined) {
             data[key] = req.body[key];

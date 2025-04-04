@@ -2,6 +2,7 @@ import { models } from '../data/db.js';
 import { errorHandler } from '../utilities/ErrorHandler.js';
 import projectSkillService from './ProjectSkillService.js';
 import projectLinkService from './ProjectLinkService.js';
+import projectPhotoService from './ProjectPhotoService.js';
 
 
 const CreateAsync = errorHandler(async function ProjectService_CreateAsync(data) {
@@ -18,6 +19,8 @@ const GetAllByUserIdAsync = errorHandler(async function ProjectService_GetAllByU
         project.projectLinks = projectLinksResponse.projectLinks;
         const projectSkillsResponse = await projectSkillService.GetAllByProjectIdAsync(project._id);
         project.projectSkills = projectSkillsResponse.projectSkills;
+        const projectPhotosResponse = await projectPhotoService.GetAllByProjectIdAsync(project._id);
+        project.projectPhotos = projectPhotosResponse.projectPhotos;
     }));
     return { isSuccess: true, message: "Projects associated with given userId read.", projects };
 });

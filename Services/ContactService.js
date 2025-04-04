@@ -7,6 +7,7 @@ import path from 'path';
 
 dotenv.config();
 
+
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
