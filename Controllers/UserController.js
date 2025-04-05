@@ -6,6 +6,12 @@ import multerMiddleware from "../middlewares/MulterMiddleware.js";
 const router = express.Router();
 
 
+router.get('/keepalive', async function KeepAlive(req, res) {
+    const response = { isSuccess: true, message: "kept alive" };
+    res.json(response);
+});
+
+
 router.post('/signup', async function SignUp(req, res) {
     const data = { 
         ...req.body
