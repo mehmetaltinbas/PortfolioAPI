@@ -20,8 +20,7 @@ const SignUpAsync = errorHandler(async function UserService_SignUpAsync(data) {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = new models.User({
         ...creationFields,
-        passwordHash: hashedPassword,
-        emailPasswordHash: hashedEmailPassword,
+        passwordHash: hashedPassword
     });
     await user.save();
     return { isSuccess: true, message: "Signed up."};
