@@ -13,4 +13,4 @@ setInterval(() => {
   }).on('error', (e) => {
     console.error(`[Keepalive] Error: ${e.message} at ${new Date().toISOString()}`);
   });
-}, 1 * 60 * 1000); // Every 1 minutes
+}, 12 * 60 * 1000); // Every 1 minutes
