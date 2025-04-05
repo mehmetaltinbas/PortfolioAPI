@@ -1,10 +1,11 @@
 import jwt from 'jsonwebtoken';
 
 export default function authMiddleware(req, res, next) {
-    const token = req.cookies.jwt || req.cookies._vercel_jwt || (req.headers.authorization && req.headers.authorization.split(" ")[1]);
-    /*console.log(`\nToken --> ${token}\n
-            Cookie --> ${req.cookies.jwt}\n
-            Header --> ${req.headers.authorization}\n`);*/
+    const cookie = req.cookies.jwt || req.cookies._vercel_jwt
+    const token = cookie || (req.headers.authorization && req.headers.authorization.split(" ")[1]);
+    console.log(`\nToken --> ${token}\n
+            Cookie --> ${cookie}\n
+            Header --> ${req.headers.authorization}\n`);
 
     if (!token) return res.json({ isSuccess: false, message: "Unauthorized: No token provided" });
 

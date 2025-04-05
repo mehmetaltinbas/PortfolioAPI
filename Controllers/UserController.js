@@ -32,6 +32,7 @@ router.post('/signin', async function SignIn(req, res) {
         sameSite: process.env.COOKIE_SAME_SITE_MODE,
         maxAge: 3600000
     });
+    
     res.json(response);
 });
 
