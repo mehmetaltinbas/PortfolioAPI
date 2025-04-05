@@ -10,6 +10,7 @@ import skillService from './SkillService.js';
 import dotenv from "dotenv";
 import fs from 'fs';
 import path from 'path';
+import userPhotoService from './UserPhotoService.js';
 
 dotenv.config();
 
@@ -63,12 +64,9 @@ const GetByIdAsync = errorHandler(async function UserService_GetByIdAsync(userId
     const experiencesResponse = await experienceService.GetAllByUserIdAsync(user._id);
     const projectsResponse = await projectService.GetAllByUserIdAsync(user._id);
     const skillsResponse = await skillService.GetAllByUserIdAsync(user._id);
+    const userPhotosResponse = await userPhotoService.GetAllByUserIdAsync(user._id);
     const birthdate = new Date(user.dateOfBirth);
     user.age = new Date().getFullYear() - birthdate.getFullYear();
-    const profilePhotoFilePath = user.profilePhotoPath;
-    user.profilePhotoPath = `${process.env.BASE_URL}${profilePhotoFilePath}`;
-    const aboutMePhotoFilePath = user.aboutMePhotoPath;
-    user.aboutMePhotoPath = `${process.env.BASE_URL}${aboutMePhotoFilePath}`;
     return { 
         isSuccess: true, 
         message: "User read for given userId.", 
@@ -78,7 +76,8 @@ const GetByIdAsync = errorHandler(async function UserService_GetByIdAsync(userId
             educations: educationsResponse.educations,
             experiences: experiencesResponse.experiences,
             projects: projectsResponse.projects,
-            skills: skillsResponse.skills
+            skills: skillsResponse.skills,
+            userPhotos: userPhotosResponse.userPhotos,
         }
     };
 });

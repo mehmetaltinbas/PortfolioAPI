@@ -5,8 +5,6 @@ const user = new mongoose.Schema({
     passwordHash: { type: String, required: true },
     firstName: { type: String },
     lastName: { type: String },
-    profilePhotoPath: { type: String },
-    aboutMePhotoPath: { type: String },
     position: { type: String },
     bio: { type: String },
     about: { type: String },

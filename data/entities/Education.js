@@ -9,7 +9,7 @@ const educationSchema = new mongoose.Schema({
     description: { type: String },
     isCurrent: { type: Boolean, default: false },
     startDate: { type: Date, required: true },
-    endDate: { type: Date },
+    endDate: { type: Date, default: null },
 });
 
 export default educationSchema;
