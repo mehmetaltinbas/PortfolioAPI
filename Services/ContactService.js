@@ -73,26 +73,29 @@ const SendMailAsync = errorHandler(async function ContactService_SendMailAsync(d
 const GetCVPathByUserIdAsync = errorHandler(async function ContactService_GetCVPathByUserIdAsync(userId) {
     const contacts = await models.Contact.find({ userId }).lean();
     const cvContact =  contacts.find(contact => contact.type == 'cv');
-    return`uploads/${cvContact.value}`;
+    return`uploads/user/cv/${cvContact.value}`;
 });
 
 
 const UpdateCVAsync = errorHandler(async function ContactService_UpdateCVAsync(data) {
+    if (!data.value) return { isSuccess: true, message: "No File provided." };
     const contacts = await models.Contact.find({ userId: data.userId }).lean();
     const cvContact =  contacts.find(contact => contact.type == 'cv');
-    if (cvContact == null) {
+    console.log(cvContact);
+    if (!cvContact) {
         const contact = new models.Contact(data);
         await contact.save();
+        return { isSuccess: true, message: "CV updated successfully.0" };
     }
-    const filePath = path.join(process.cwd(), `uploads/${cvContact.value}`);
+    const filePath = path.join(process.cwd(), `uploads/user/cv/${cvContact.value}`);
     if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
     const updatedCVContact = await models.Contact.findOneAndUpdate(
         { _id: cvContact._id, userId: data.userId },
         { $set: { value: data.value} },
         { new: true }
     );
-    if (!updatedCVContact) return { isSuccess: false, message: "Couldn't updated." };
-    return { isSuccess: true, message: "Contact updated successfully" };
+    if (!updatedCVContact) return { isSuccess: false, message: "CV couldn't updated." };
+    return { isSuccess: true, message: "CV updated successfully.1" };
 });
 
 

@@ -6,11 +6,22 @@ import path from 'path';
 
 dotenv.config();
 
+
 const CreateAsync = errorHandler(async function UserPhotoService_CreateAsync(data) {
-    const userPhoto = new models.UserPhoto(data);
-    await userPhoto.save();
+    const currentUserPhoto = await models.UserPhoto.findOne({ type: data.type });
+    if (!currentUserPhoto) {
+        const userPhoto = new models.UserPhoto(data);
+        await userPhoto.save();
+        return { isSuccess: true, message: "User photo created successfully" };
+    }
+    const filePath = path.join(process.cwd(), `uploads/user/photo/${currentUserPhoto.value}`);
+    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+
+    currentUserPhoto.value = data.value;
+    await currentUserPhoto.save();
     return { isSuccess: true, message: "User photo created successfully" };
 });
+
 
 const GetAllByUserIdAsync = errorHandler(async function UserPhotoService_GetAllByUserIdAsync(userId) {
     const userPhotos = await models.UserPhoto.find({ userId }).lean();
@@ -19,6 +30,7 @@ const GetAllByUserIdAsync = errorHandler(async function UserPhotoService_GetAllB
     });
     return { isSuccess: true, message: "User photos associated with given userId read.", userPhotos };
 });
+
 
 const UpdateAsync = errorHandler(async function UserPhotoService_UpdateAsync(data) {
     const { userId, userPhotoId, ...updateFields } = data;
@@ -32,6 +44,7 @@ const UpdateAsync = errorHandler(async function UserPhotoService_UpdateAsync(dat
     return { isSuccess: true, message: "User photo updated." };
 });
 
+
 const DeleteAsync = errorHandler(async function UserPhotoService_DeleteAsync(data) {
     const { userPhotoId } = data;
     const userPhoto = await models.UserPhoto.findById(userPhotoId);
@@ -44,6 +57,7 @@ const DeleteAsync = errorHandler(async function UserPhotoService_DeleteAsync(dat
 
     return { isSuccess: true, message: "User photo deleted successfully" };
 });
+
 
 export default {
     CreateAsync,

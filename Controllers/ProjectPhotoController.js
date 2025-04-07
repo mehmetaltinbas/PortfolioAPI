@@ -6,11 +6,14 @@ import multerMiddleware from "../middlewares/MulterMiddleware.js";
 const router = express.Router();
 
 
-router.post("/create/:projectId", authMiddleware, multerMiddleware.upload.single('file'), async function CreateProjectPhoto(req, res) {
+router.post("/create/:projectId", authMiddleware, (req, res, next) => {
+    req.uploadFolder = 'project/photo';
+    next();
+}, multerMiddleware.upload.single('file'), async function CreateProjectPhoto(req, res) {
     const data = { 
         projectId: req.params.projectId,
         value: req.file.filename
-     };
+    };
 
     Object.keys(req.body).forEach(key => {
         if (req.body[key] !== undefined) {

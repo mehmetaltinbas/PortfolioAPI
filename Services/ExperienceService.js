@@ -14,17 +14,9 @@ const CreateAsync = errorHandler(async function ExperienceService_CreateAsync(da
 const GetAllByUserIdAsync = errorHandler(async function ExperienceService_GetAllByUserIdAsync(userId) {
     const experiences = await models.Experience.find({ userId }).lean();
 
-    const formatDate = (isoString) => {
-        const date = new Date(isoString);
-        return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
-    };
-
-    const experiencesWithActivities = await Promise.all(experiences.map(async (experience) => {
-        experience.startDate = formatDate(experience.startDate);
-        experience.endDate = experience.isCurrent ? "Present" : formatDate(experience.endDate);
-        
+    const experiencesWithActivities = await Promise.all(experiences.map(async (experience) => { 
         const activitiesResponse = await activityService.GetAllByExperienceIdAsync(experience._id);
-        experience.activities = activitiesResponse.activities; // Activities ekleniyor
+        experience.activities = activitiesResponse.activities;
 
         return experience;
     }));

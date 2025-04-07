@@ -5,12 +5,13 @@ import multerMiddleware from "../middlewares/MulterMiddleware.js";
 
 const router = express.Router();
 
-router.post("/create/:userId", authMiddleware, (req, res, next) => {
-    req.uploadFolder = 'user/photo',
+
+router.post("/create", authMiddleware, (req, res, next) => {
+    req.uploadFolder = 'user/photo';
     next();
 }, multerMiddleware.upload.single('file'), async function CreateUserPhoto(req, res) {
     const data = {
-        userId: req.params.userId,
+        userId: req.user.userId,
         value: req.file.filename
     };
 
@@ -24,10 +25,12 @@ router.post("/create/:userId", authMiddleware, (req, res, next) => {
     res.json(response);
 });
 
+
 router.get("/:userId", async function GetAllUserPhotosByUserId(req, res) {
     const response = await userPhotoService.GetAllByUserIdAsync(req.params.userId);
     res.json(response);
 });
+
 
 router.patch("/update/:userPhotoId", authMiddleware, async function UpdateUserPhoto(req, res) {
     const data = { userPhotoId: req.params.userPhotoId };
@@ -42,10 +45,12 @@ router.patch("/update/:userPhotoId", authMiddleware, async function UpdateUserPh
     res.json(response);
 });
 
+
 router.delete("/delete/:userPhotoId", authMiddleware, async function DeleteUserPhoto(req, res) {
     const data = { userPhotoId: req.params.userPhotoId };
     const response = await userPhotoService.DeleteAsync(data);
     res.json(response);
 });
+
 
 export default router;

@@ -17,7 +17,7 @@ const CreateAsync = errorHandler(async function ProjectPhotoService_CreateAsync(
 const GetAllByProjectIdAsync = errorHandler(async function ProjectPhotoService_GetAllByProjectIdAsync(projectId) {
     const projectPhotos = await models.ProjectPhoto.find({ projectId }).lean();
     projectPhotos.forEach((projectphoto) => {
-        projectphoto.value = `${process.env.BASE_URL}uploads/${projectphoto.value}`;
+        projectphoto.value = `${process.env.BASE_URL}uploads/project/photo/${projectphoto.value}`;
     })
     return { isSuccess: true, message: "Project photos associated with given projectId read.", projectPhotos };
 });
@@ -43,7 +43,7 @@ const DeleteAsync = errorHandler(async function ProjectPhotoService_DeleteAsync(
     const deletedProjectPhoto = await models.ProjectPhoto.findOneAndDelete({ _id: projectPhotoId });
     if (!deletedProjectPhoto) return { isSuccess: false, message: "Project photo not found or unauthorized" };
 
-    const filePath = path.join(process.cwd(), `uploads/${projectPhoto.value}`);
+    const filePath = path.join(process.cwd(), `uploads/project/photo/${projectPhoto.value}`);
     if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
 
     return { isSuccess: true, message: "Project photo deleted successfully" };

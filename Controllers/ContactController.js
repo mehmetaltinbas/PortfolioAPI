@@ -74,13 +74,15 @@ router.get('/cv/download', authMiddleware, async function DownloadCV(req, res) {
 });
 
 
-router.patch('/cv/update', authMiddleware, multerMiddleware.upload.single("file"), async function UpdateCV(req, res) {
+router.patch('/cv/update', authMiddleware, (req, res, next) => {
+    req.uploadFolder = 'user/cv',
+    next();
+}, multerMiddleware.upload.single("file"), async function UpdateCV(req, res) {
     const data = { 
         userId: req.user.userId,
         type: 'cv',
-        value: req.file.filename,
+        value: req.file?.filename,
     };
-    console.log(data);
 
     const response = await contactService.UpdateCVAsync(data);
     res.json(response);
