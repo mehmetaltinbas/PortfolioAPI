@@ -18,7 +18,7 @@ const GetAllByProjectIdAsync = errorHandler(async function ProjectPhotoService_G
     const projectPhotos = await models.ProjectPhoto.find({ projectId }).lean();
     projectPhotos.forEach((projectphoto) => {
         projectphoto.value = `${process.env.BASE_URL}uploads/project/photo/${projectphoto.value}`;
-    })
+    });
     return { isSuccess: true, message: "Project photos associated with given projectId read.", projectPhotos };
 });
 

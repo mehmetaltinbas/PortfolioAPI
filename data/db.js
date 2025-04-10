@@ -6,7 +6,7 @@ import experienceSchema from "./entities/Experience.js";
 import projectSchema from "./entities/Project.js";
 import skillSchema from './entities/Skill.js';
 import userSchema from "./entities/User.js";
-import activitySchema from './entities/Activity.js'
+import activitySchema from './entities/Activity.js';
 import projectSkillSchema from "./entities/ProjectSkill.js";
 import projectLinkSchema from "./entities/ProjectLink.js";
 import projectPhotoSchema from './entities/ProjectPhoto.js';
@@ -38,6 +38,6 @@ const models = {
     ProjectLink: mongoose.model('ProjectLink', projectLinkSchema),
     ProjectPhoto: mongoose.model('ProjectPhoto', projectPhotoSchema),
     UserPhoto: mongoose.model('UserPhoto', userPhotoSchema)
-}
+};
 
 export { connectDb, models };

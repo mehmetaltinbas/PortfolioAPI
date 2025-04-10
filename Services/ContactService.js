@@ -14,7 +14,7 @@ const transporter = nodemailer.createTransport({
         user: process.env.EMAIL,
         pass: process.env.EMAIL_PASSWORD
     }
-})
+});
 
 
 const CreateAsync = errorHandler(async function ContactService_CreateAsync(data) {
@@ -107,4 +107,4 @@ export default {
     SendMailAsync,
     GetCVPathByUserIdAsync,
     UpdateCVAsync
-}
+};

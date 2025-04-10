@@ -27,7 +27,7 @@ const GetByIdAsync = errorHandler(async function ActivityService_GetAllByIdAsync
         message: "Activity read for given activityId.", 
         activity
     };
-})
+});
 
 
 const UpdateAsync = errorHandler(async function ActivityService_UpdateAsync(data) {

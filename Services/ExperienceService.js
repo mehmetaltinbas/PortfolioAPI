@@ -67,4 +67,4 @@ export default {
     GetAllByUserIdAsync,
     UpdateAsync,
     DeleteAsync,
-}
+};

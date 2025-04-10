@@ -16,7 +16,7 @@ const GetAllByUserIdAsync = errorHandler(async function EducationService_GetAllB
     const formatDate = (isoString) => {
         const date = new Date(isoString);
         return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
-    }
+    };
     const endDateFormat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;  // "2025-03-01T00:00:00.000Z" format
     educations.forEach(education => {
         education.startDate = new Date(education.startDate).toLocaleDateString();

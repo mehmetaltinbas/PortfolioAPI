@@ -165,4 +165,4 @@ export default {
     DeleteProfilePhotoAsync,
     UpdateAboutMePhotoAsync,
     DeleteAboutMePhotoAsync
-}
+};
