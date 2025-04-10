@@ -2,42 +2,49 @@ import { models } from '../data/db.js';
 import { errorHandler } from '../utilities/ErrorHandler.js';
 import activityService from './ActivityService.js';
 
-
 const CreateAsync = errorHandler(async function ExperienceService_CreateAsync(data) {
     if (data.isCurrent) data.endDate = null;
     const experience = new models.Experience(data);
     await experience.save();
-    return { isSuccess: true, message: "Experience created successfully" };
+    return { isSuccess: true, message: 'Experience created successfully' };
 });
 
+const GetAllByUserIdAsync = errorHandler(
+    async function ExperienceService_GetAllByUserIdAsync(userId) {
+        const experiences = await models.Experience.find({ userId }).lean();
 
-const GetAllByUserIdAsync = errorHandler(async function ExperienceService_GetAllByUserIdAsync(userId) {
-    const experiences = await models.Experience.find({ userId }).lean();
+        const experiencesWithActivities = await Promise.all(
+            experiences.map(async (experience) => {
+                const activitiesResponse = await activityService.GetAllByExperienceIdAsync(
+                    experience._id,
+                );
+                experience.activities = activitiesResponse.activities;
 
-    const experiencesWithActivities = await Promise.all(experiences.map(async (experience) => { 
-        const activitiesResponse = await activityService.GetAllByExperienceIdAsync(experience._id);
-        experience.activities = activitiesResponse.activities;
+                return experience;
+            }),
+        );
 
-        return experience;
-    }));
+        experiencesWithActivities.sort((a, b) => {
+            if (a.isCurrent && !b.isCurrent) return -1;
+            if (!a.isCurrent && b.isCurrent) return 1;
 
-    experiencesWithActivities.sort((a, b) => {
-        if (a.isCurrent && !b.isCurrent) return -1;
-        if (!a.isCurrent && b.isCurrent) return 1;
+            const dateA = new Date(a.endDate || a.startDate);
+            const dateB = new Date(b.endDate || b.startDate);
 
-        const dateA = new Date(a.endDate || a.startDate);
-        const dateB = new Date(b.endDate || b.startDate);
+            if (dateA.getTime() === dateB.getTime()) {
+                return new Date(a.startDate) - new Date(b.startDate);
+            }
 
-        if (dateA.getTime() === dateB.getTime()) {
-            return new Date(a.startDate) - new Date(b.startDate);
-        }
+            return dateB - dateA;
+        });
 
-        return dateB - dateA;
-    });
-
-    return { isSuccess: true, message: "Experiences associated with given userId read.", experiences: experiencesWithActivities };
-});
-
+        return {
+            isSuccess: true,
+            message: 'Experiences associated with given userId read.',
+            experiences: experiencesWithActivities,
+        };
+    },
+);
 
 const UpdateAsync = errorHandler(async function ExperienceService_UpdateAsync(data) {
     const { userId, experienceId, ...updateFields } = data;
@@ -45,22 +52,31 @@ const UpdateAsync = errorHandler(async function ExperienceService_UpdateAsync(da
     const updatedExperience = await models.Experience.findOneAndUpdate(
         { _id: experienceId, userId },
         { $set: updateFields },
-        { new: true }
+        { new: true },
     );
 
-    if (!updatedExperience) return { isSuccess: false, message: "Experience not found or unauthorized" };
-    return { isSuccess: true, message: "Experience updated." };
+    if (!updatedExperience)
+        return {
+            isSuccess: false,
+            message: 'Experience not found or unauthorized',
+        };
+    return { isSuccess: true, message: 'Experience updated.' };
 });
-
 
 const DeleteAsync = errorHandler(async function ExperienceService_DeleteAsync(data) {
     const { userId, experienceId } = data;
-    const deletedExperience = await models.Experience.findOneAndDelete({ _id: experienceId, userId });
+    const deletedExperience = await models.Experience.findOneAndDelete({
+        _id: experienceId,
+        userId,
+    });
 
-    if (!deletedExperience) return { isSuccess: false, message: "Experience not found or unauthorized" };
-    return { isSuccess: true, message: "Experience deleted successfully" };
+    if (!deletedExperience)
+        return {
+            isSuccess: false,
+            message: 'Experience not found or unauthorized',
+        };
+    return { isSuccess: true, message: 'Experience deleted successfully' };
 });
-
 
 export default {
     CreateAsync,

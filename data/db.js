@@ -1,25 +1,28 @@
-import mongoose, { mongo } from "mongoose";
-import dotenv from "dotenv";
+import mongoose, { mongo } from 'mongoose';
+import dotenv from 'dotenv';
 import contactSchema from './entities/Contact.js';
 import educationSchema from './entities/Education.js';
-import experienceSchema from "./entities/Experience.js";
-import projectSchema from "./entities/Project.js";
+import experienceSchema from './entities/Experience.js';
+import projectSchema from './entities/Project.js';
 import skillSchema from './entities/Skill.js';
-import userSchema from "./entities/User.js";
+import userSchema from './entities/User.js';
 import activitySchema from './entities/Activity.js';
-import projectSkillSchema from "./entities/ProjectSkill.js";
-import projectLinkSchema from "./entities/ProjectLink.js";
+import projectSkillSchema from './entities/ProjectSkill.js';
+import projectLinkSchema from './entities/ProjectLink.js';
 import projectPhotoSchema from './entities/ProjectPhoto.js';
-import userPhotoSchema from "./entities/UserPhoto.js";
+import userPhotoSchema from './entities/UserPhoto.js';
 
 dotenv.config();
 
 const connectDb = async () => {
     try {
         const connection = await mongoose.connect(process.env.DB_CONNECTION, {
-            dbName: process.env.DB_NAME
+            dbName: process.env.DB_NAME,
         });
-        console.log('MongoDB connected successfully to database: ', connection.connection.name);
+        console.log(
+            'MongoDB connected successfully to database: ',
+            connection.connection.name,
+        );
     } catch (error) {
         console.error('MongoDB connection failed:', error.message);
         process.exit(1);
@@ -37,7 +40,7 @@ const models = {
     ProjectSkill: mongoose.model('ProjectSkill', projectSkillSchema),
     ProjectLink: mongoose.model('ProjectLink', projectLinkSchema),
     ProjectPhoto: mongoose.model('ProjectPhoto', projectPhotoSchema),
-    UserPhoto: mongoose.model('UserPhoto', userPhotoSchema)
+    UserPhoto: mongoose.model('UserPhoto', userPhotoSchema),
 };
 
 export { connectDb, models };
