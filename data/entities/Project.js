@@ -6,6 +6,9 @@ const projectSchema = new mongoose.Schema({
         ref: 'User',
         required: true,
     },
+    order: {
+        type: Number,
+    },
     type: {
         type: [String],
         enum: ['web', 'mobile', 'desktop'],

@@ -12,7 +12,7 @@ const CreateAsync = errorHandler(async function ProjectService_CreateAsync(data)
 
 const GetAllByUserIdAsync = errorHandler(
     async function ProjectService_GetAllByUserIdAsync(userId) {
-        const projects = await models.Project.find({ userId }).lean();
+        let projects = await models.Project.find({ userId }).lean();
         await Promise.all(
             projects.map(async (project) => {
                 const projectLinksResponse = await projectLinkService.GetAllByProjectIdAsync(
@@ -29,6 +29,7 @@ const GetAllByUserIdAsync = errorHandler(
                 project.projectPhotos = projectPhotosResponse.projectPhotos;
             }),
         );
+        projects.sort((a, b) => a.order - b.order);
         return {
             isSuccess: true,
             message: 'Projects associated with given userId read.',
