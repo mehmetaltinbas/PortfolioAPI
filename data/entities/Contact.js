@@ -8,7 +8,7 @@ const contactSchema = new mongoose.Schema({
     },
     type: {
         type: String,
-        enum: [
+        /* enum: [
             'cv',
             'email',
             'phone',
@@ -18,7 +18,7 @@ const contactSchema = new mongoose.Schema({
             'upwork',
             'instagram',
             'youtube',
-        ],
+        ], */
         required: true,
     },
     value: { type: String, required: true },
