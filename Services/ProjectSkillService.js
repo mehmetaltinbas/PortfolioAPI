@@ -40,8 +40,7 @@ const UpdateAsync = errorHandler(async function ProjectSkillService_UpdateAsync(
 const DeleteAsync = errorHandler(async function ProjectSkillService_DeleteAsync(data) {
     const { projectId, projectSkillId } = data;
     const deletedProjectSkill = await models.ProjectSkill.findOneAndDelete({
-        _id: projectSkillId,
-        projectId,
+        _id: projectSkillId
     });
 
     if (!deletedProjectSkill)
